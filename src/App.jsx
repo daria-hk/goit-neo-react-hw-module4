@@ -1,75 +1,30 @@
 import { useEffect, useState } from "react";
-import { fetchArticlesWithTopic } from "./articles-api.js";
-
-const GalleryList = ({ items }) => (
-  <ul>
-    {items.map(
-      ({
-        tags,
-        webformatURL,
-        largeImageURL,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => (
-        <li className="gallery-card" key={largeImageURL}>
-          <a
-            className="gallery-link"
-            href={largeImageURL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img className="gallery-img" src={webformatURL} alt={tags} />
-            <div className="values-container">
-              <ul className="labels">
-                <li>Likes</li>
-                <li>{likes}</li>
-              </ul>
-              <ul className="labels">
-                <li>Views</li>
-                <li>{views}</li>
-              </ul>
-              <ul className="labels">
-                <li>Comments</li>
-                <li>{comments}</li>
-              </ul>
-              <ul className="labels">
-                <li>Downloads</li>
-                <li>{downloads}</li>
-              </ul>
-            </div>
-          </a>
-        </li>
-      )
-    )}
-  </ul>
-);
+import { fetchPhotosForGallery } from "./unsplash-api.js";
+import ImageGallery from "./components/ImageGallery/ImageGallery.jsx";
 
 export function App() {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    async function fetchArticles() {
+    async function loadPhotos() {
       try {
         setLoading(true);
-        const data = await fetchArticlesWithTopic({
-          q: "react",
+        const data = await fetchPhotosForGallery({
+          query: "nature",
           page: 1,
           per_page: 10,
         });
-        setArticles(data.hits);
+        setPhotos(data);
       } catch (error) {
-        console.error("Error fetching articles:", error);
         setError(true);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchArticles();
+    loadPhotos();
   }, []);
 
   return (
@@ -79,10 +34,10 @@ export function App() {
       {error && (
         <p>Whoops, something went wrong! Please try reloading this page!</p>
       )}
-      {articles.length > 0 ? (
-        <GalleryList items={articles} />
+      {photos.length > 0 ? (
+        <ImageGallery items={photos} />
       ) : (
-        !loading && <p>No articles found!</p>
+        !loading && <p>No photos found!</p>
       )}
     </div>
   );
