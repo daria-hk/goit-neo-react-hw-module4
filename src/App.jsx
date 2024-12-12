@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchPhotosForGallery } from "./unsplash-api.js";
 import ImageGallery from "./components/ImageGallery/ImageGallery.jsx";
+import SearchBar from "./components/SearchBar/SearchBar.jsx";
 
 export function App() {
   const [photos, setPhotos] = useState([]);
@@ -29,6 +30,7 @@ export function App() {
 
   return (
     <div>
+      <SearchBar />
       <h1>Latest articles</h1>
       {loading && <p>Loading data, please wait...</p>}
       {error && (
