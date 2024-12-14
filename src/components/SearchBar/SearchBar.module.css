@@ -1,0 +1,13 @@
+form {
+  gap: 10px;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+header {
+  background-color: blueviolet;
+  position: absolute;
+  width: 100%;
+  top: 0;
+}

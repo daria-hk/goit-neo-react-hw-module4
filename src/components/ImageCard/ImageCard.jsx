@@ -1,5 +1,7 @@
+import css from "./ImageCard.module.css";
+
 const ImageCard = ({ id, alt_description, urlSmall, urlFull }) => (
-  <li className="gallery-card" key={id}>
+  <li className={css.galleryCard} key={id}>
     <a
       className="gallery-link"
       href={urlFull}

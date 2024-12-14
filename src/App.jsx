@@ -3,22 +3,42 @@ import { fetchPhotosForGallery } from "./unsplash-api.js";
 import ImageGallery from "./components/ImageGallery/ImageGallery.jsx";
 import SearchBar from "./components/SearchBar/SearchBar.jsx";
 import Loader from "./components/Loader/Loader.jsx";
+import ErrorMassage from "./components/ErrorMassage/ErrorMassage.jsx";
 
 export function App() {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [query, setQuery] = useState("");
+
+  const initialValues = { search: "" };
+
+  const handleSubmit = (values, actions) => {
+    console.log("Submitted values:", values);
+    if (values.search.length > 0) {
+      setQuery(values.search);
+      actions.resetForm();
+    }
+  };
 
   useEffect(() => {
+    setLoading(false);
+
+    if (!query) return;
     async function loadPhotos() {
       try {
         setLoading(true);
         const data = await fetchPhotosForGallery({
-          query: "n",
+          query,
           page: 1,
-          per_page: 10,
+          per_page: 12,
         });
-        setPhotos(data);
+        console.log(data);
+        if (data.length > 0) {
+          setPhotos(data);
+        } else {
+          setPhotos([]);
+        }
       } catch (error) {
         setError(true);
       } finally {
@@ -26,19 +46,20 @@ export function App() {
       }
     }
 
-    loadPhotos();
-  }, []);
+    if (query) {
+      loadPhotos();
+    }
+  }, [query]);
 
   return (
     <div>
-      <SearchBar />
-      <h1>Latest articles</h1>
+      <SearchBar initialValues={initialValues} onSubmit={handleSubmit} />
       {loading && <Loader />}
-      {error && <ErrorMessage />}
+      {error && <ErrorMassage />}
       {photos.length > 0 ? (
         <ImageGallery items={photos} />
       ) : (
-        !loading && <p>No photos found!</p>
+        !loading && query && <p className="noPhotos">No photos found!</p>
       )}
     </div>
   );
