@@ -1,0 +1,4 @@
+.galleryList {
+  display: flex;
+  flex-wrap: wrap;
+}

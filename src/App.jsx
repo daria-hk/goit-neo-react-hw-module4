@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchPhotosForGallery } from "./unsplash-api.js";
 import ImageGallery from "./components/ImageGallery/ImageGallery.jsx";
 import SearchBar from "./components/SearchBar/SearchBar.jsx";
+import Loader from "./components/Loader/Loader.jsx";
 
 export function App() {
   const [photos, setPhotos] = useState([]);
@@ -13,7 +14,7 @@ export function App() {
       try {
         setLoading(true);
         const data = await fetchPhotosForGallery({
-          query: "nature",
+          query: "n",
           page: 1,
           per_page: 10,
         });
@@ -32,10 +33,8 @@ export function App() {
     <div>
       <SearchBar />
       <h1>Latest articles</h1>
-      {loading && <p>Loading data, please wait...</p>}
-      {error && (
-        <p>Whoops, something went wrong! Please try reloading this page!</p>
-      )}
+      {loading && <Loader />}
+      {error && <ErrorMessage />}
       {photos.length > 0 ? (
         <ImageGallery items={photos} />
       ) : (
