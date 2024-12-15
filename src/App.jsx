@@ -6,6 +6,7 @@ import Loader from "./components/Loader/Loader.jsx";
 import ErrorMassage from "./components/ErrorMassage/ErrorMassage.jsx";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn.jsx";
 import ImageModal from "./components/ImageModal/ImageModal.jsx";
+import toast, { Toaster } from "react-hot-toast";
 
 export function App() {
   const [photos, setPhotos] = useState([]);
@@ -30,6 +31,10 @@ export function App() {
   };
 
   const handleSubmit = (values, actions) => {
+    if (values.search.length === 0) {
+      toast.error("Please enter a search term!");
+      return;
+    }
     if (values.search.length > 0) {
       setQuery(values.search);
       setPage(1);
@@ -83,6 +88,11 @@ export function App() {
   return (
     <div>
       <SearchBar initialValues={initialValues} onSubmit={handleSubmit} />
+      <Toaster
+        toastOptions={{
+          duration: 1000,
+        }}
+      />
       {loading && <Loader />}
       {error && <ErrorMassage />}
       {photos.length > 0 ? (

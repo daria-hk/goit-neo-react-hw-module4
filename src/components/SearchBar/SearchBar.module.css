@@ -13,3 +13,8 @@ header {
   padding: 0;
   margin: 0;
 }
+
+input,
+.btn {
+  height: 40px;
+}

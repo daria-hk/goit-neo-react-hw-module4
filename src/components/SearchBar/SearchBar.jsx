@@ -5,15 +5,17 @@ const SearchBar = ({ initialValues, onSubmit }) => {
   return (
     <header>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
-        {({ values }) => (
+        {({ values, errors, touched }) => (
           <Form className={css.form}>
-            <Field
-              className={css.field}
-              type="text"
-              name="search"
-              placeholder="Search images and photos"
-              value={values.search}
-            />
+            <div>
+              <Field
+                className={css.field}
+                type="text"
+                name="search"
+                placeholder="Search images and photos"
+                value={values.search}
+              />
+            </div>
             <button className={css.btn} type="submit">
               Submit
             </button>
