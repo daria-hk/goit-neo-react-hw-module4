@@ -1,8 +1,7 @@
 import ImageCard from "../ImageCard/ImageCard";
 import css from "./ImageGallery.module.css";
 
-const ImageGallery = ({ items }) => {
-  //remove duplicate
+const ImageGallery = ({ items, onImageClick }) => {
   const uniqueItems = Array.from(
     new Map(items.map((item) => [item.id, item])).values()
   );
@@ -16,6 +15,7 @@ const ImageGallery = ({ items }) => {
           alt_description={alt_description}
           urlSmall={small}
           urlRegular={regular}
+          onImageClick={() => onImageClick(regular)}
         />
       ))}
     </ul>

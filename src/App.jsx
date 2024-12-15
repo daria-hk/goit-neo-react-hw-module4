@@ -5,6 +5,7 @@ import SearchBar from "./components/SearchBar/SearchBar.jsx";
 import Loader from "./components/Loader/Loader.jsx";
 import ErrorMassage from "./components/ErrorMassage/ErrorMassage.jsx";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn.jsx";
+import ImageModal from "./components/ImageModal/ImageModal.jsx";
 
 export function App() {
   const [photos, setPhotos] = useState([]);
@@ -12,13 +13,27 @@ export function App() {
   const [error, setError] = useState(false);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [hasMorePhotos, setHasMorePhotos] = useState(true);
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const initialValues = { search: "" };
+
+  const openModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    setSelectedImage(null);
+  };
 
   const handleSubmit = (values, actions) => {
     if (values.search.length > 0) {
       setQuery(values.search);
       setPage(1);
+      setHasMorePhotos(true);
       actions.resetForm();
     }
   };
@@ -29,8 +44,6 @@ export function App() {
 
   useEffect(() => {
     setLoading(false);
-
-    if (!query) return;
 
     async function loadPhotos() {
       try {
@@ -48,6 +61,10 @@ export function App() {
           } else {
             setPhotos((prevPhotos) => [...prevPhotos, ...data]);
           }
+
+          if (data.length < 12) {
+            setHasMorePhotos(false);
+          }
         } else {
           setPhotos([]);
         }
@@ -61,7 +78,7 @@ export function App() {
     if (query) {
       loadPhotos();
     }
-  }, [query, page]); //dependency on query and page
+  }, [query, page]);
 
   return (
     <div>
@@ -70,11 +87,18 @@ export function App() {
       {error && <ErrorMassage />}
       {photos.length > 0 ? (
         <>
-          <ImageGallery items={photos} />
-          <LoadMoreBtn handleLoadMore={handleLoadMore} />
+          <ImageGallery items={photos} onImageClick={openModal} />
+          {hasMorePhotos && <LoadMoreBtn handleLoadMore={handleLoadMore} />}
         </>
       ) : (
         !loading && query && <p className="noPhotos">No photos found!</p>
+      )}
+      {selectedImage && (
+        <ImageModal
+          isOpen={modalIsOpen}
+          imageUrl={selectedImage}
+          onRequestClose={closeModal}
+        />
       )}
     </div>
   );
