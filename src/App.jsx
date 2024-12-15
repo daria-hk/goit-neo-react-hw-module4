@@ -4,38 +4,50 @@ import ImageGallery from "./components/ImageGallery/ImageGallery.jsx";
 import SearchBar from "./components/SearchBar/SearchBar.jsx";
 import Loader from "./components/Loader/Loader.jsx";
 import ErrorMassage from "./components/ErrorMassage/ErrorMassage.jsx";
+import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn.jsx";
 
 export function App() {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
 
   const initialValues = { search: "" };
 
   const handleSubmit = (values, actions) => {
-    console.log("Submitted values:", values);
     if (values.search.length > 0) {
       setQuery(values.search);
+      setPage(1);
       actions.resetForm();
     }
+  };
+
+  const handleLoadMore = async () => {
+    setPage((prevPage) => prevPage + 1);
   };
 
   useEffect(() => {
     setLoading(false);
 
     if (!query) return;
+
     async function loadPhotos() {
       try {
         setLoading(true);
         const data = await fetchPhotosForGallery({
           query,
-          page: 1,
+          page,
           per_page: 12,
         });
-        console.log(data);
+
         if (data.length > 0) {
-          setPhotos(data);
+          // new search, replace old photos, otherwise, add new phootos.
+          if (page === 1) {
+            setPhotos(data);
+          } else {
+            setPhotos((prevPhotos) => [...prevPhotos, ...data]);
+          }
         } else {
           setPhotos([]);
         }
@@ -49,7 +61,7 @@ export function App() {
     if (query) {
       loadPhotos();
     }
-  }, [query]);
+  }, [query, page]); //dependency on query and page
 
   return (
     <div>
@@ -57,7 +69,10 @@ export function App() {
       {loading && <Loader />}
       {error && <ErrorMassage />}
       {photos.length > 0 ? (
-        <ImageGallery items={photos} />
+        <>
+          <ImageGallery items={photos} />
+          <LoadMoreBtn handleLoadMore={handleLoadMore} />
+        </>
       ) : (
         !loading && query && <p className="noPhotos">No photos found!</p>
       )}
