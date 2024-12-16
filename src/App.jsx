@@ -10,7 +10,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 export function App() {
   const [photos, setPhotos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -48,11 +48,13 @@ export function App() {
   };
 
   useEffect(() => {
-    setLoading(false);
+    if (!query) return; //if query is empty do not load
 
     async function loadPhotos() {
       try {
         setLoading(true);
+        setError(false); // to disable error message if this was visible
+
         const data = await fetchPhotosForGallery({
           query,
           page,
