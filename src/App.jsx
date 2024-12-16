@@ -31,12 +31,14 @@ export function App() {
   };
 
   const handleSubmit = (values, actions) => {
-    if (values.search.length === 0) {
+    const searchValue = values.search.trim();
+
+    if (searchValue.length === 0) {
       toast.error("Please enter a search term!");
       return;
     }
-    if (values.search.length > 0) {
-      setQuery(values.search);
+    if (searchValue.length > 0) {
+      setQuery(searchValue);
       setPage(1);
       setHasMorePhotos(true);
       actions.resetForm();
