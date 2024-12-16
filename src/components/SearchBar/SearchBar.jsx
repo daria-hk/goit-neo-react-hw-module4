@@ -5,7 +5,7 @@ const SearchBar = ({ initialValues, onSubmit }) => {
   return (
     <header>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
-        {({ values, errors, touched }) => (
+        {({ values }) => (
           <Form className={css.form}>
             <div>
               <Field
